@@ -76,7 +76,7 @@ set tls = 0
 # This nickname is used when joining a room, when no nick is explicitly
 # specified by the user.  Note that when the nickname option is not set,
 # the jid variable can be used.
-set nickname = Matthieu Reussner
+set nickname = KLN
 
 # Proxy
 # mcabber can use a proxy if it supports the CONNECT method
