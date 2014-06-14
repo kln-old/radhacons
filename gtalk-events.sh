@@ -20,11 +20,15 @@ function greeshma_alarm(){
 
 		for((i=0;i<${myval[$num]};i++))
 		do
-			espeak "$speech"
+			spd-say "$speech"
 			sleep 1;
 		done
 	fi
 
+}
+function tell_her() {
+	echo "telling her $1" >> /tmp/greesh.txt
+	echo "/say_to -q nitheeshkl.dev@gmail.com $1" > /home/kln/.mcabber/mcabber.fifo;
 }
 
 function radha_nooo(){
@@ -47,7 +51,72 @@ function ahal_meep(){
 	fi
 }
 
+function rps(){
+	declare -a elm=("rock" "paper" "scissor")
+	rps=$(cat $1 | egrep -o '^rps=.*;$')
+	if [ "$rps" ]
+	then
+		rps=$(echo $rps | tr -d "; " | cut -d "=" -f2);
+		rand=$(( ( RANDOM % 3 ) ))
+		me=${elm[$rand]}
+		you=$(echo $rps |  egrep -io '(^rock$)|(paper$)|(scissor$)' | tr '[:upper:]' '[:lower:]')
 
+		if [ "$you" ]
+		then
+			echo "you:$you me:$me" >> /tmp/greesh_rps.txt
+			tell_her "you:$you me:$me"
+
+			case "$me" in
+				"rock")
+					case "$you" in
+						"rock")
+							tell_her "copy cat!!...let's try again."
+							;;
+						"paper")
+							tell_her "you were lucky!!...let's try again."
+							;;
+						"scissor")
+							tell_her "haha...i win!!"
+							;;
+					esac
+					;;
+				"paper")
+					case "$you" in
+						"rock")
+							tell_her "you lose....better luck next time :P"
+							;;
+						"paper")
+							tell_her "trying to copy me eh?! cat!!...let's try again."
+							;;
+						"scissor")
+							tell_her "damn!!...you 	wont get so lucky next 	time."
+							;;
+					esac
+					;;
+				"scissor")
+					case "$you" in
+						"rock")
+							tell_her "its ok...enjoy now...i'll get you next time!!."
+							;;
+						"paper")
+							tell_her
+							"aww...paapa...dont worry...you've to lose sometimes."
+							;;
+						"scissor")
+							tell_her "stop trying to copy me!!"
+							;;
+					esac
+
+					;;
+			esac
+		else
+			tell_her "this is not valid..dont you know to play?!"
+		fi
+
+        #start a recurseive bomb! :D
+        tell_her "rps= $me;"
+	fi
+}
 #
 #	Radhacons
 #
@@ -66,6 +135,8 @@ then
 	radha_nooo $4
 	ahal_meep $4
 	greeshma_alarm $4
+	rps $4
+    rm $4
 fi
 
 #KIND=$(echo $1 | sed -e "s/'/_/g")
@@ -85,7 +156,8 @@ fi
 
 image="/home/kln/.mcabber/pictures/gmail/$3/$smiley"
 
+#echo "mcabber_event_hook('$1',  '$2',  '$3',  '$4', '$image')" >> /tmp/mcabber.log
 # finally dispaly the awesome notification 
 echo "mcabber_event_hook('$1',  '$2',  '$3',  '$4', '$image')" | awesome-client
-    
+
 #cat frnd_list | egrep "$id" -B 1 | sed 's/"name": "//g' | sed 's/"id": "[0-9]*"//g' | grep -Poe '[a-zA-Z][a-zA-Z ]*'
